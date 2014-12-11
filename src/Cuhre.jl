@@ -1,12 +1,14 @@
 module Cuhre
 
+export cuhre
+
 tagfile = Pkg.dir("Cuhre", "deps", "installed_vers")
 cubavers = readchomp(tagfile)
-const libcuba = Pkg.dir("Cuhre", "deps", "Cuba-$cubavers", "libcuba")
+const libcuba = Pkg.dir("Cuhre", "deps", "cuba", "libcuba")
 
-function cuhre(ndim::Int32, ncomp::Int32, integrand::Function, userdata::Any,
-               epsrel::Float64, epsabs::Float64, flags::Int32, mineval::Int32,
-               maxeval::Int32)
+function cuhre(ndim::Int, ncomp::Int, integrand::Function, userdata::Any,
+               epsrel::Float64, epsabs::Float64, flags::Int, mineval::Int,
+               maxeval::Int)
     # Call to Cuhre(const int ndim, const int ncomp, integrand_t integrand,
     #               void *userdata, const int nvec, const double epsrel,
     #               const double epsabs, const int flags, const int mineval,
@@ -25,22 +27,29 @@ function cuhre(ndim::Int32, ncomp::Int32, integrand::Function, userdata::Any,
     key = 0   
     # Generate random string for statefile name.
     statefile_name_len = 40
-    statefile = randstring(statefile_name_len)
+    statefile = bytestring(randstring(statefile_name_len))
     # Let Cuhre handle starting/stopping integration processes.
     spin = -1
     # Return values: integers.
     nregions, neval, fail = 0, 0, 0
+    # TODO: sholuld be able to use the following declarations for nregionsm
+    # neval, and fail and remove corresponding &'s from ccall to get the
+    # values of these reported from C (instead of having them stuck at 0).
+    # However, doing this results in a segfault. Why?
+    #nregions = Int32[0]
+    #neval = Int32[0]
+    #fail = Int32[0]
     # Return values: double arrays.
-    integral = zeros(Float64, ncomp)
-    error = zeros(Float64, ncomp)
-    prob = zeros(Float64, ncomp)
+    integral = Array(Float64, ncomp)
+    error = Array(Float64, ncomp)
+    prob = Array(Float64, ncomp)
 
     ccall((:Cuhre, libcuba), Int32, (Int32, Int32, Ptr{Void}, Ptr{Void}, Int32,
-          Float64, Float64, Int32, Int32, Int32, Int32, Ptr{Char}, Ptr{Void},
+          Float64, Float64, Int32, Int32, Int32, Int32, Ptr{Int8}, Ptr{Int64},
           Ptr{Int32}, Ptr{Int32}, Ptr{Int32}, Ptr{Float64}, Ptr{Float64},
           Ptr{Float64}), ndim, ncomp, integrand_wrap, userdata, nvec, epsrel,
-          epsabs, flags, mineval, maxeval, key, statefile, spin, nregions,
-          neval, fail, integral, error, prob)
+          epsabs, flags, mineval, maxeval, key, statefile, &spin, &nregions,
+          &neval, &fail, integral, error, prob)
 
     return (nregions, neval, fail, integral, error, prob)
 end
