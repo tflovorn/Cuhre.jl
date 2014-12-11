@@ -1,0 +1,3 @@
+[submodule "deps/cuba"]
+	path = deps/cuba
+	url = https://github.com/JohannesBuchner/cuba
