@@ -4,19 +4,25 @@ export cuhre
 
 const libcuba = Pkg.dir("Cuhre", "deps", "cuba", "libcuba")
 
+# Call to Cuhre(const int ndim, const int ncomp, integrand_t integrand,
+#               void *userdata, const double epsrel, const double epsabs,
+#               const int flags, const int mineval, const int maxeval,
+#               const int key, const char *statefile, int *nregions,
+#               int *neval, int *fail, double integral[], double error[],
+#               double prob[])
+#
+# Always sets key = 0 and randomly generates statefile name.
+#
+# A function f of type integrand_t has the signature:
+# int f(const int *ndim, const double x[], const int *ncomp,
+#       double f[], void *userdata)
+#
+# The integrand provided as an argument to the following function should
+# have the Julia-equivalent signature. Within the integrand function,
+# x and f must be converted to arrays using pointer_to_array().
 function cuhre(ndim::Int, ncomp::Int, integrand::Function, userdata::Any,
                epsrel::Float64, epsabs::Float64, flags::Int, mineval::Int,
                maxeval::Int)
-    # Call to Cuhre(const int ndim, const int ncomp, integrand_t integrand,
-    #               void *userdata, const double epsrel,
-    #               const double epsabs, const int flags, const int mineval,
-    #               const int maxeval, const int key, const char *statefile,
-    #               int *nregions, int *neval, int *fail,
-    #               double integral[], double error[], double prob[])
-    #
-    # A function f of type integrand_t has the signature:
-    # int f(const int *ndim, const double x[], const int *ncomp,
-    #       double f[], void *userdata)
     integrand_wrap = cfunction(integrand, Int32, (Ptr{Int32}, Ptr{Float64},
                                Ptr{Int32}, Ptr{Float64}, Ptr{Void}))
     # Use default integration rule.
@@ -25,11 +31,6 @@ function cuhre(ndim::Int, ncomp::Int, integrand::Function, userdata::Any,
     statefile_name_len = 40
     statefile = bytestring(randstring(statefile_name_len))
     # Return values: integers.
-    #nregions, neval, fail = 0, 0, 0
-    # TODO: sholuld be able to use the following declarations for nregionsm
-    # neval, and fail and remove corresponding &'s from ccall to get the
-    # values of these reported from C (instead of having them stuck at 0).
-    # However, doing this results in a segfault. Why?
     nregions = Int32[0]
     neval = Int32[0]
     fail = Int32[0]

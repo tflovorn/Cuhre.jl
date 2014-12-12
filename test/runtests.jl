@@ -20,6 +20,9 @@ epsabs = 1e-9
 flags = 1
 mineval = 10
 maxeval = 10^9
+
+# Integrate ftest = [sin(x[1])^2, cos(x[2])^2 - 1, sin(x[1])] over the region
+# x[1] = 0 to 1, x[2] = 0 to 1.
 nregions, neval, fail, integral, error, prob = cuhre(ndim, ncomp, fTest,
         userdata, epsrel, epsabs, flags, mineval, maxeval)
 expected = [0.272675643293580, -0.272675643293580, 0.459697694131860]
