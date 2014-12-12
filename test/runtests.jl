@@ -24,11 +24,14 @@ nregions, neval, fail, integral, error, prob = cuhre(ndim, ncomp, fTest,
         userdata, epsrel, epsabs, flags, mineval, maxeval)
 expected = [0.272675643293580, -0.272675643293580, 0.459697694131860]
 
-@test fail == 0
-println(nregions, neval)
-println(integral)
-println(error)
-println(prob)
+println("cuhre() call complete.")
+println("fail = ", fail[1])
+@test fail[1] == 0
+println("nregions = ", nregions[1])
+println("neval = ", neval[1])
+println("integral = ", integral)
+println("error = ", error)
+println("prob = ", prob)
 for i = 1:length(expected)
     @test_approx_eq_eps integral[i] expected[i] 2.0*epsabs
 end
