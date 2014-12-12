@@ -33,10 +33,10 @@ nregions, neval, fail, integral, error, prob = cuhre(ndim, ncomp, fTest,
 expected = [0.272675643293580, -0.272675643293580, 0.459697694131860]
 
 println("cuhre() call complete.")
-println("fail = ", fail[1])
+println("fail = ", fail)
 @test fail[1] == 0
-println("nregions = ", nregions[1])
-println("neval = ", neval[1])
+println("nregions = ", nregions)
+println("neval = ", neval)
 println("integral = ", integral)
 println("error = ", error)
 println("prob = ", prob)
@@ -62,10 +62,10 @@ nregions, neval, fail, integral, error, prob = cuhreComplex(ncomp, fTestComplex,
         epsrel, epsabs, flags, mineval, maxeval, a, b)
 
 println("cuhreComplex() call complete.")
-println("fail = ", fail[1])
+println("fail = ", fail)
 @test fail[1] == 0
-println("nregions = ", nregions[1])
-println("neval = ", neval[1])
+println("nregions = ", nregions)
+println("neval = ", neval)
 println("integral = ", integral)
 println("error = ", error)
 println("prob = ", prob)

@@ -49,7 +49,7 @@ function cuhre(ndim::Int, ncomp::Int, integrand::Function, userdata::Any,
           epsabs, flags, mineval, maxeval, key, statefile, nregions,
           neval, fail, integral, error, prob)
 
-    return (nregions, neval, fail, integral, error, prob)
+    return (nregions[1], neval[1], fail[1], integral, error, prob)
 end
 
 # Integrate the given integrand in the region specified by (a, b), where
