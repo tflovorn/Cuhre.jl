@@ -104,7 +104,7 @@ function integrandComplex_wrap(ndim::Ptr{Int32}, x::Ptr{Float64},
     # TODO - is there a good thread-safe way to avoid allocation here?
     x, Jacobian = convertBounds(x_v, a, b)
     v = zeros(Complex{Float64}, ncomp_int)
-    #integrandComplex = unsafe_pointer_to_objref(userdata)::Function
+
     integrandComplex(x, v)
     for i = 1:ncomp_int/2
         f_v[2*i-1] = real(v[i]) * Jacobian

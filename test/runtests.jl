@@ -1,6 +1,10 @@
 using Base.Test
 using Cuhre
 
+# Test for cuhre():
+# Integrate ftest = [sin(x[1])^2, cos(x[2])^2 - 1, sin(x[1])] over the region
+# x[1] = 0 to 1, x[2] = 0 to 1.
+
 function fTest(ndim::Ptr{Int32}, x::Ptr{Float64}, ncomp::Ptr{Int32}, 
                f::Ptr{Float64}, userdata::Ptr{Void})
     ret::Int32
@@ -24,8 +28,6 @@ flags = 1
 mineval = 10
 maxeval = 10^9
 
-# Integrate ftest = [sin(x[1])^2, cos(x[2])^2 - 1, sin(x[1])] over the region
-# x[1] = 0 to 1, x[2] = 0 to 1.
 nregions, neval, fail, integral, error, prob = cuhre(ndim, ncomp, fTest,
         userdata, epsrel, epsabs, flags, mineval, maxeval)
 expected = [0.272675643293580, -0.272675643293580, 0.459697694131860]
@@ -42,6 +44,10 @@ for i = 1:length(expected)
     @test_approx_eq_eps integral[i] expected[i] 2.0*epsabs
 end
 println("--- cuhre() test passed.")
+
+# Test for cuhreComplex():
+# Integrate ftestComplex = [sin(x[1])^2, i*(cos(x[2])^2 - 1), sin(x[1])] over
+# the region x[1] = -pi to pi, x[2] = -pi to pi.
 
 function fTestComplex(x, v)
     v[1] = sin(x[1])^2 + 0.0im
