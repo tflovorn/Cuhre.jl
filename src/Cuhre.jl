@@ -2,8 +2,6 @@ module Cuhre
 
 export cuhre
 
-tagfile = Pkg.dir("Cuhre", "deps", "installed_vers")
-cubavers = readchomp(tagfile)
 const libcuba = Pkg.dir("Cuhre", "deps", "cuba", "libcuba")
 
 function cuhre(ndim::Int, ncomp::Int, integrand::Function, userdata::Any,
