@@ -1,10 +1,13 @@
 using Base.Test
 using Cuhre
 
-function fTest(ndim, x, ncomp, f, userdata)
+function fTest(ndim::Ptr{Int32}, x::Ptr{Float64}, ncomp::Ptr{Int32}, 
+               f::Ptr{Float64}, userdata::Ptr{Void})
     ret::Int32
-    x_v = pointer_to_array(x, (int(ndim),))
-    f_v = pointer_to_array(f, (int(ncomp),))
+    ndim_int = unsafe_load(ndim)
+    ncomp_int = unsafe_load(ncomp)
+    x_v = pointer_to_array(x, (int(ndim_int),))
+    f_v = pointer_to_array(f, (int(ncomp_int),))
     f_v[1] = sin(x_v[1])^2
     f_v[2] = cos(x_v[2])^2 - 1.0
     f_v[3] = sin(x_v[1])
@@ -38,4 +41,30 @@ println("prob = ", prob)
 for i = 1:length(expected)
     @test_approx_eq_eps integral[i] expected[i] 2.0*epsabs
 end
-println("cuhre() test passed.")
+println("--- cuhre() test passed.")
+
+function fTestComplex(x, v)
+    v[1] = sin(x[1])^2 + 0.0im
+    v[2] = 0.0 + (cos(x[2])^2 - 1.0)*1.0im
+    v[3] = sin(x[1]) + 0.0im
+end
+a = [-pi, -pi]
+b = [pi*1.0, pi*1.0]
+expected = [2.0*pi^2 + 0.0im, 0.0 - 2.0*pi^2*1.0im, 0.0+0.0im]
+
+nregions, neval, fail, integral, error, prob = cuhreComplex(ncomp, fTestComplex,
+        epsrel, epsabs, flags, mineval, maxeval, a, b)
+
+println("cuhreComplex() call complete.")
+println("fail = ", fail[1])
+@test fail[1] == 0
+println("nregions = ", nregions[1])
+println("neval = ", neval[1])
+println("integral = ", integral)
+println("error = ", error)
+println("prob = ", prob)
+for i = 1:length(expected)
+    @test_approx_eq_eps real(integral[i]) real(expected[i]) 2.0*epsabs
+    @test_approx_eq_eps imag(integral[i]) imag(expected[i]) 2.0*epsabs
+end
+println("--- cuhreComplex() test passed.")
