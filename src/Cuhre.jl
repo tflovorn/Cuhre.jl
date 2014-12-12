@@ -24,7 +24,7 @@ function cuhre(ndim::Int, ncomp::Int, integrand::Function, userdata::Any,
                epsrel::Float64, epsabs::Float64, flags::Int, mineval::Int,
                maxeval::Int)
     if ndim <= 1
-        error("Cuhre requires number of integration regions dimensions > 1.")
+        error("Cuhre requires the integration region to have dimension ndim > 1.")
     end
     integrand_wrap = cfunction(integrand, Int32, (Ptr{Int32}, Ptr{Float64},
                                Ptr{Int32}, Ptr{Float64}, Ptr{Void}))
